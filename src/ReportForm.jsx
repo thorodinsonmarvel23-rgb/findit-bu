@@ -4,6 +4,7 @@ import {
   X, Upload, MapPin, CalendarDays,
   Package, FileText, User, Mail, Phone
 } from 'lucide-react'
+import { supabase } from './supabaseClient'
 
 const categories = [
   'Electronics',
@@ -58,7 +59,22 @@ const handleSubmit = async (e) => {
     photo: photoData,
     createdAt: new Date().toISOString(),
   }
+const { error } = await supabase.from('reports').insert([
+  {
+    type: type,
+    item_name: formData.itemName,
+    category: formData.category,
+    description: formData.description,
+    location: formData.location,
+    item_date: formData.date,
+    photo_url: photoData
+  }
+])
 
+if (error) {
+  alert('Error saving report: ' + error.message)
+  return
+}
   const existingReports = JSON.parse(
     localStorage.getItem('finditReports') || '[]'
   )
